@@ -1,6 +1,5 @@
 project:
   type: website
-  output-dir: docs
 
 website:
   title: "mysite"
@@ -15,6 +14,7 @@ format:
     theme: trestles
     css: styles.css
     toc: true
+    output-dir: . 
 
 editor: visual
 
