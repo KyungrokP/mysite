@@ -17,6 +17,7 @@ format:
   html:
     theme: broadside
     toc: true
+    output-dir: .
 
 editor: visual
 
