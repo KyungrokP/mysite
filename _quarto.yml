@@ -14,7 +14,6 @@ format:
     theme: trestles
     css: styles.css
     toc: true
-    output-dir: . 
 
 editor: visual
 
