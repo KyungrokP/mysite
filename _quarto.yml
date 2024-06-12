@@ -4,10 +4,14 @@ project:
 website:
   title: "mysite"
   navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+    background: primary
+    items:
+      - text: Home
+        href: index.qmd
+      - text: About
+        href: about.qmd
+      - text: Contact
+        href: contact.qmd
 
 format:
   html:
