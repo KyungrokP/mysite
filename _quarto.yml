@@ -15,8 +15,7 @@ website:
 
 format:
   html:
-    theme: trestles
-    css: styles.css
+    theme: broadside
     toc: true
 
 editor: visual
