@@ -15,7 +15,7 @@ format:
   html:
     theme: trestles
     toc: true
-    toc-depth: 2
+    embed-resources: true
 
 editor: visual
 
