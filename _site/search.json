@@ -9,22 +9,29 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Kyungrok Park",
+    "title": "Home",
     "section": "",
-    "text": "Finley Malloc is the Chief Data Scientist at Wengo Analytics. When not innovating on data platforms, Finley enjoys spending time unicycling and playing with her pet iguana."
+    "text": "Welcome to my website! My name is Kyungrok Park, and I am currently studying Economics and Applied Statistics in University of Toronto. My research is based on macroeconomics data in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in economic and statistic world. Enjoy!"
   },
   {
     "objectID": "index.html#education",
     "href": "index.html#education",
-    "title": "Kyungrok Park",
+    "title": "Home",
     "section": "Education",
-    "text": "Education\nUniversity of California, San Diego San Diego, CA PhD in Mathematics Sept 2011 - June 2015\nMacalester College St. Paul MA B.A in Economics Sept 2007 - June 2011"
+    "text": "Education\nUniversity of Toronto, ON, Canada, B.A in Economics and Applied Statistics Sept 2022"
   },
   {
-    "objectID": "index.html#experience",
-    "href": "index.html#experience",
-    "title": "Kyungrok Park",
-    "section": "Experience",
-    "text": "Experience\nWengo Analytics Head Data Scientist April 2018 - present\nGeoScynce Chief Analyst Spet 2012 - April 2018"
+    "objectID": "index.html#research",
+    "href": "index.html#research",
+    "title": "Home",
+    "section": "Research",
+    "text": "Research"
+  },
+  {
+    "objectID": "index.html#cv-full-document",
+    "href": "index.html#cv-full-document",
+    "title": "Home",
+    "section": "CV (Full Document)",
+    "text": "CV (Full Document)\nHere is my CV (resume) for your reference"
   }
 ]

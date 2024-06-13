@@ -1,5 +1,5 @@
 ---
-title: "Kyungrok Park"
+title: "Home"
 about:
   template: trestles
   image: profile.jpg
@@ -7,18 +7,19 @@ about:
     - icon: github
       text: Github
       href: https://github.com/KyungrokP
+    - icon: linkedin
+      text: Linkedin
+      href: https://linkedin.com
 ---
 
-Finley Malloc is the Chief Data Scientist at Wengo Analytics. When not innovating on data platforms, Finley enjoys spending time unicycling and playing with her pet iguana.
+Welcome to my website! My name is Kyungrok Park, and I am currently studying Economics and Applied Statistics in University of Toronto. My research is based on macroeconomics data in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in economic and statistic world. Enjoy!
 
 ## Education
 
-University of California, San Diego  San Diego, CA PhD in Mathematics  Sept 2011 - June 2015
+University of Toronto, ON, Canada, B.A in Economics and Applied Statistics Sept 2022
 
-Macalester College  St. Paul MA B.A in Economics  Sept 2007 - June 2011
+## Research
 
-## Experience
+## CV (Full Document)
 
-Wengo Analytics  Head Data Scientist  April 2018 - present
-
-GeoScynce Chief Analyst Spet 2012 - April 2018
+Here is my [CV (resume)](resume.pdf) for your reference

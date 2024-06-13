@@ -10,14 +10,12 @@ website:
         href: index.qmd
       - text: About
         href: about.qmd
-      - text: Contact
-        href: contact.qmd
 
 format:
   html:
     theme: trestles
     toc: true
-    output-dir: .
+    toc-depth: 2
 
 editor: visual
 
