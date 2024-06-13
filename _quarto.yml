@@ -4,16 +4,17 @@ project:
 website:
   title: "mysite"
   navbar:
-    background: primary
-    items:
-      - text: Home
-        href: index.qmd
-      - text: About
-        href: about.qmd
+    navbar:
+    title: "Kyungrok Park"
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+
 
 format:
   html:
-    theme: trestles
+    theme: cosmo
     toc: true
     embed-resources: true
 
