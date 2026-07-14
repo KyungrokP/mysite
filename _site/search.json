@@ -2,7 +2,7 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "Studies",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
@@ -18,7 +18,7 @@
     "href": "index.html#education",
     "title": "Home",
     "section": "Education",
-    "text": "Education\nUniversity of Toronto, ON, Canada, B.A in Economics and Applied Statistics Sept 2022"
+    "text": "Education\nUniversity of Toronto, ON, Canada, B.A in Economics and Applied Statistics"
   },
   {
     "objectID": "index.html#research",
@@ -33,5 +33,26 @@
     "title": "Home",
     "section": "CV (Full Document)",
     "text": "CV (Full Document)\nHere is my CV (resume) for your reference"
+  },
+  {
+    "objectID": "index.html#project",
+    "href": "index.html#project",
+    "title": "Home",
+    "section": "Project",
+    "text": "Project\n\nExploring KV cache Compression Method (Quantization, Grouping and Random Rotation)\nStochastic Modelling for Stock Price Prediction (Brownian motion and It\\(\\hat{\\text{o}}\\)’s lemma)"
+  },
+  {
+    "objectID": "index.html#paper-review",
+    "href": "index.html#paper-review",
+    "title": "Home",
+    "section": "Paper Review",
+    "text": "Paper Review\nIntroducing some papers related to my research area"
+  },
+  {
+    "objectID": "index.html#self-study-notes",
+    "href": "index.html#self-study-notes",
+    "title": "Home",
+    "section": "Self-Study Notes",
+    "text": "Self-Study Notes\nIncluding some important notes and knowledge required to understand for my study"
   }
 ]

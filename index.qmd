@@ -16,9 +16,18 @@ Welcome to my website! My name is Kyungrok Park, and I am currently studying Eco
 
 ## Education
 
-University of Toronto, ON, Canada, B.A in Economics and Applied Statistics Sept 2022
+University of Toronto, ON, Canada, B.A in Economics and Applied Statistics
 
-## Research
+## Project
+
+1.  Exploring KV cache Compression Method (Quantization, Grouping and Random Rotation)
+2.  Stochastic Modelling for Stock Price Prediction (Brownian motion and It$\hat{\text{o}}$'s lemma)
+
+## Paper Review
+Introducing some papers related to my research area
+
+## Self-Study Notes
+Including some important notes and knowledge required to understand for my study
 
 ## CV (Full Document)
 
