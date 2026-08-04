@@ -9,8 +9,20 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
-
+      - text: "Projects"
+        menu: 
+          - text: "Project Overview"
+            href: projects.qmd
+          - text: "KV cache Compression Study"
+            href: projects/kv_cache.qmd
+          - text: "Stochastic Prediction"
+            href: projects/stochastic.qmd
+      - text: "Paper Review"
+        menu: 
+          - text: "MoH: Multi-head Attention as Mixture of Heads"
+            href: papers/moh.qmd 
+          - text: "DepthWeave-KV"
+            href: papers/dw-kv.qmd
 
 format:
   html:

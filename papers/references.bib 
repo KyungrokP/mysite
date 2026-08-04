@@ -1,0 +1,17 @@
+@misc{cordoba2026depthweave,
+  title         = {{DepthWeave-KV}: Token-Adaptive Cross-Layer Residual
+                   Factorization for Long-Context {KV} Cache Compression},
+  author        = {C{\'o}rdoba, Anna and
+                   Puente Tercero, Adam and
+                   Angulo Hijo, Nerea and
+                   Linares Tercero, Mar and
+                   Barrientos, Julia and
+                   Miranda, Ainhoa and
+                   Olivera, Jes{\'u}s},
+  year          = {2026},
+  eprint        = {2607.06523},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  doi           = {10.48550/arXiv.2607.06523},
+  url           = {https://arxiv.org/abs/2607.06523}
+}
