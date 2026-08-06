@@ -110,4 +110,44 @@ The fused kernel ensures that these compressed bytes remain compressed until the
 
 ![](figures/dw_fig1.png){width="489"}
 
+The Figure 1 shows the overall operation of the Depthweave.
+
+The figure assumes there are three depth regions (shallow lexical, middle bridge and deep semantic layers).
+
+The blue curve represents shared basis for adjacent layers, and each different line shows the different low-rank basis channels.
+
+The orange blocks indicates the residual budget for a token. Since the horizontal direction represents the token position, and the same token receives the same residual correction across depth, the orange blocks appear in the same horizontal positions across different regions.
+
+The Depth router above roughly describes the residual budget decision method described before.
+
+Online error probes presents the feedback mechanism that adjusts residual ranks during generation.
+
 ![](figures/dw_fig2.png){width="468"}
+
+The figure 2 shows a more detailed mechanism of DepthWeave. It starts from three adjacent transformer layers and specifies each attention head from different layers.
+
+Then, the shared basis for attention heads in the same position across the layers are determined.
+
+The next step shows the learned gate coefficients ($g$) and the token-specific residual buffers from token-conditional depth router, and the Attention output calculation by using Fused CUDA operation described in the earlier section.
+
+## Question regarding to the Residual Rank
+
+From the residual rank assignment, we can raise a question, " which dimensions or channels are selected for residual correction?"(if $\rho = 8$, then 8 dimensions or channels should be corrected.). Since the paper only describes how many channels are selected ($\rho \in \{0,2,4,8\}$), we have to decide which channels are corrected by residuals.
+
+There are a few options we can assume for selecting raw head dimensions,
+
+1.  Largest residual magnitude
+
+    Choose $S = \text{TopK}_j(|r_j|, \rho)$. This is the simplest method, and it exactly minimizes the coordinate-masking residual error $||r-\tilde{r}||^2_2$ among all choices of $\rho$ raw coordinates.
+
+2.  Variance-normalized magnitude
+
+    Some channels may naturally have much larger scales than others. Instead of using $|r_j|$, use use $$s_j = \frac{|r_j|}{\sigma_{m,h,j}+ \epsilon}$$
+
+    where $\sigma_{m,h,j}$ is the typical residual scale for that channel in the window and head.
+
+    Then, select $S = \text{TopK}_j(s_j, \rho)$. This detects unusually large residuals relative to the channel's normal behavior, rather than always selecting naturally high-variance dimensions.
+
+3.  Fixed channel ordering
+
+4.  Group or block selection

@@ -67,7 +67,7 @@
     "href": "papers/dw-kv.html#figure-explanation",
     "title": "DepthWeave-KV Paper Review",
     "section": "Figure Explanation",
-    "text": "Figure Explanation"
+    "text": "Figure Explanation\n\nThe Figure 1 shows the overall operation of the Depthweave.\nThe figure assumes there are three depth regions (shallow lexical, middle bridge and deep semantic layers).\nThe blue curve represents shared basis for adjacent layers, and each different line shows the different low-rank basis channels.\nThe orange blocks indicates the residual budget for a token. Since the horizontal direction represents the token position, and the same token receives the same residual correction across depth, the orange blocks appear in the same horizontal positions across different regions.\nThe Depth router above roughly describes the residual budget decision method described before.\nOnline error probes presents the feedback mechanism that adjusts residual ranks during generation.\n\nThe figure 2 shows a more detailed mechanism of DepthWeave. It starts from three adjacent transformer layers and specifies each attention head from different layers.\nThen, the shared basis for attention heads in the same position across the layers are determined.\nThe next step shows the learned gate coefficients (\\(g\\)) and the token-specific residual buffers from token-conditional depth router, and the Attention output calculation by using Fused CUDA operation described in the earlier section."
   },
   {
     "objectID": "index.html",
@@ -110,5 +110,12 @@
     "title": "Home",
     "section": "CV (Full Document)",
     "text": "CV (Full Document)\nHere is my CV (resume) for your reference"
+  },
+  {
+    "objectID": "papers/dw-kv.html#question-regarding-to-the-residual-rank",
+    "href": "papers/dw-kv.html#question-regarding-to-the-residual-rank",
+    "title": "DepthWeave-KV Paper Review",
+    "section": "Question regarding to the Residual Rank",
+    "text": "Question regarding to the Residual Rank\nFrom the residual rank assignment, we can raise a question, ” which dimensions or channels are selected for residual correction?“(if \\(\\rho = 8\\), then 8 dimensions or channels should be corrected.). Since the paper only describes how many channels are selected (\\(\\rho \\in \\{0,2,4,8\\}\\)), we have to decide which channels are corrected by residuals.\nThere are a few options we can assume,\n\nLargest residual magnitudes\nFixed channel ordering"
   }
 ]

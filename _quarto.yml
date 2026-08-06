@@ -24,6 +24,16 @@ website:
             href: papers/moh.qmd 
           - text: "DepthWeave-KV"
             href: papers/dw-kv.qmd
+          - text: "TurboQuant"
+            href: paper/tq.qmd
+            
+      - text: "Study"
+        menu: 
+          - text: "Sketching (Linear Algebra)"
+            href: study/sketching.qmd
+          
+          - text: "Digital Design and Computer Architecture"
+            href: study/computer_arch.qmd
 
 format:
   html:
