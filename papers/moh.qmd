@@ -1,4 +1,156 @@
 ---
 title: "MOH: Multi-head Attention as Mixture of Heads"
 format: html
+
+references:
+  - id: jin2025moh
+    type: paper-conference
+    title: "MoH: Multi-Head Attention as Mixture-of-Head Attention"
+    author:
+      - family: Jin
+        given: Peng
+      - family: Zhu
+        given: Bo
+      - family: Yuan
+        given: Li
+      - family: Yan
+        given: Shuicheng
+    issued:
+      date-parts:
+        - [2025]
+    container-title: "Proceedings of the 42nd International Conference on Machine Learning"
+    volume: 267
+    page: "28233-28255"
+    publisher: "PMLR"
+    URL: "https://arxiv.org/abs/2410.11842"
 ---
+
+This page reviews the paper [@jin2025moh] published and submitted on Oct 2024.
+
+## Improvement upon the Multi-Head Attention
+
+The Multi-head Attention mechanism has multiple attention heads which operate in parallel, and the final attention outputs are calculated as the sum of all heads. To improve the efficiency (with maintaining the similar accuracy) of this mechanism, the paper proposes a selection mechanism for tokens to select appropriate attention heads (Dynamic Attention head Routing Mechanism).
+
+## Mixture of Experts
+
+The previous study, "Mixture of Experts (MOE)", is the main motivation and methodology of this paper. It literally means that it chooses experts for a subset of model and combines those specialized subsets to process the information. Furthermore, it uses a special machine called a router which activates Top-K experts for each subset.
+
+## Mixture of Heads
+
+Motivated by the MOE, the paper introduces Mixture of Head Attention, "MOH". Instead of parameters scaling in regular MOE, they chooses attention heads as experts. Similar to MOE, it consists of h heads, $H = {H^1,...,H^h}$, and a router that activates the Top-K attention heads.
+
+## More about Methodology
+
+### Heads as Experts
+
+The MoH output can be calculated as
+
+$$MoH(X, X') = \sum_{i=1}^h g_iH^iW^i_O$$
+
+where $X$ and $X'$ are input tokens, $g_i$ is the routing score, $H_i$ is the output of $i$-th attention head, and $W_O^i$ is that Head's portion of the output projection.
+
+Since $g_i = 0$ when the head is inactive, the Top-K heads can be selected and activated based on the routing score.
+
+There are two key advantages of MoH mentioned in the paper,
+
+- MoH enables each token to select the most relevant attention heads, boosting inference efficiency while maintaining accuracy
+
+- In contrast to the standard summation in multi-head attention, the weighted summation in MoH enhances the flexibility of the attention mechanism and unlocks performance potential.
+
+It is easy to understand the first key advantage but a bit vague about the second statement.
+
+why choosing a few heads instead of uniformly calculate all of them makes more flexibility, and what was the unresolved performance potential before MoH?
+
+This can be answered by the details of methodology below.
+
+### Shared Heads
+
+Among several attention heads, there are several heads that are always active for every token. The paper calls this as shared heads.
+
+For $h$ attention heads, we can define $h_s$ as the number of shared heads, and $h-h_s$ as number of routed heads.
+
+$H_1, ...,H^{h_s},H^{h_s+1},...,H^h$
+
+As it shows above, first $h_s$ heads are chosen to be the shared heads, and the main purpose of the shared heads is to capture the global common knowledge such as basic grammar or punctuation markers.
+
+### Two-stage Routing
+
+From the equation, $$MoH(X, X') = \sum_{i=1}^h g_iH^iW^i_O$$
+
+There are actually two stages to determine the routing score.
+
+- Stage 1: Balance the two head types
+
+  The model computes $[\alpha_1, \alpha_2]=\text{Softmax}(W_hx_t)$
+
+  where $\alpha_1$ is the total importance assigned to shared heads group, and $\alpha_2$ is the total importance assigned to routed heads group.
+
+- Stage 2: Weight or select heads inside each group
+
+  The shared heads receive the probabilities, $p^{(s)} = \text{Softmax}(W_sx_t)$. Since shared heads are always active, their routing scores are calculated as $g_{t,i} = \alpha_1 p^{(s)}$, $(1\leq i \leq h_s)$.
+
+  For the routed heads, the router computes $p^{(r)} = \text{Softmax}(W_rx_t)$. Then only for Top-K routed heads, the routing scores are calculated as $g_{t,i} = \alpha_2p^{(r)}$.
+
+  So, the routing score is the mixture of **head-type importance** and **individual-head importance**.
+
+  And this is also the main reason that MoH is flexible and increases its performance as it reflects the head-type importance and individual-head importance in a such way.
+
+### Load Balance Loss
+
+Since MoH only selects Top-K routed heads, the router may repeatedly select the same few heads without additional control. For example, if it is Top-1 model, one of Heads (say, Head 1) receives most tokens, and rest of Heads may receive almost none.
+
+We call this as **routing collapse**.
+
+To mitigate such problem, the paper introduces load balance loss on routed heads only.
+
+$$\mathcal{L}_b = \sum_{h_s+1}^h P_if_i$$
+
+$$P_i = \frac{1}{T}\sum_{t=1}^T \text{Softmax}(W_rx_t)_{i-h_s}$$
+
+$$f_i = \frac{1}{T}\sum_{t=1}^T 1(\text{Token $x_t$ selects Head $i$})$$
+
+As it shows above, there are 3 equations for load balance loss.
+
+$T$ is the total number of tokens in the training batch.
+
+$P_i$ represents the average router probability assigned to Head $i$ across the batch.
+
+$f_i$ measures the actual fraction of tokens selecting head $i$ after Top-K routing.
+
+If we rewrite the loss as $\mathcal{L}_b = \frac{1}{T}\sum_{t=1}^T \sum_i f_i p_{t,i}$
+
+Then for one token router logit $z_{t,j}$,
+
+$$\frac{\partial \mathcal{L}_b}{\partial z_{t,j}} = \frac{1}{T}p_{t,j}(f_j-\sum_if_ip_{t,i})$$
+
+- Overused Head
+
+  Suppose head $j$ has a selection frequency larger than the probability-weighted average,
+
+  $$f_j > \sum_if_i p_{t,i}$$
+
+  Then
+
+  $$\frac{\partial \mathcal{L}_b}{\partial z_{t,j}} > 0 $$
+
+  and gradient descent performs
+
+  $$z_{t,j} \leftarrow z_{t,j}-\eta\frac{\partial \mathcal{L}_b}{\partial z_{t,j}}$$
+
+  so the head’s logit decreases. Its future routing probability also decreases.
+
+  On the other hand, head's logit increases and future routing probability increases for underused heads.
+
+### Total Training Objective
+
+$$\mathcal{L} = \mathcal{L_{\text{task}}} + \beta \mathcal{L}_b $$
+
+The toal objective is the summation of task loss $\mathcal{L}_{\text{task}}$ and Balancing loss $\mathcal{L}_b$ with a parameter $\beta$.
+
+The task loss may tell us "this head is particularly useful for this token", and the balancing loss may tell us "this head is already receiving too many tokens across this batch".
+
+The parameter $\beta$ controls the trade-off between them. Depending on the scale of $\beta$, the routing can become highly specialized or balanced. In the paper, $\beta$ is set to 0.01 for all tasks.
+
+## Experiments (Image Classification/Generation)
+
+## How did they adapt this method to existing LLM?

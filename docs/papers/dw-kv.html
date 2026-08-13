@@ -4189,10 +4189,16 @@ window.Quarto = {
 <section id="question-regarding-to-the-residual-rank" class="level2">
 <h2 class="anchored" data-anchor-id="question-regarding-to-the-residual-rank">Question regarding to the Residual Rank</h2>
 <p>From the residual rank assignment, we can raise a question, ” which dimensions or channels are selected for residual correction?“(if <span class="math inline">\(\rho = 8\)</span>, then 8 dimensions or channels should be corrected.). Since the paper only describes how many channels are selected (<span class="math inline">\(\rho \in \{0,2,4,8\}\)</span>), we have to decide which channels are corrected by residuals.</p>
-<p>There are a few options we can assume,</p>
+<p>There are a few options we can assume for selecting raw head dimensions,</p>
 <ol type="1">
-<li><p>Largest residual magnitudes</p></li>
+<li><p>Largest residual magnitude</p>
+<p>Choose <span class="math inline">\(S = \text{TopK}_j(|r_j|, \rho)\)</span>. This is the simplest method, and it exactly minimizes the coordinate-masking residual error <span class="math inline">\(||r-\tilde{r}||^2_2\)</span> among all choices of <span class="math inline">\(\rho\)</span> raw coordinates.</p></li>
+<li><p>Variance-normalized magnitude</p>
+<p>Some channels may naturally have much larger scales than others. Instead of using <span class="math inline">\(|r_j|\)</span>, use use <span class="math display">\[s_j = \frac{|r_j|}{\sigma_{m,h,j}+ \epsilon}\]</span></p>
+<p>where <span class="math inline">\(\sigma_{m,h,j}\)</span> is the typical residual scale for that channel in the window and head.</p>
+<p>Then, select <span class="math inline">\(S = \text{TopK}_j(s_j, \rho)\)</span>. This detects unusually large residuals relative to the channel’s normal behavior, rather than always selecting naturally high-variance dimensions.</p></li>
 <li><p>Fixed channel ordering</p></li>
+<li><p>Group or block selection</p></li>
 </ol>
 
 

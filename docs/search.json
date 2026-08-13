@@ -116,6 +116,48 @@
     "href": "papers/dw-kv.html#question-regarding-to-the-residual-rank",
     "title": "DepthWeave-KV Paper Review",
     "section": "Question regarding to the Residual Rank",
-    "text": "Question regarding to the Residual Rank\nFrom the residual rank assignment, we can raise a question, ” which dimensions or channels are selected for residual correction?“(if \\(\\rho = 8\\), then 8 dimensions or channels should be corrected.). Since the paper only describes how many channels are selected (\\(\\rho \\in \\{0,2,4,8\\}\\)), we have to decide which channels are corrected by residuals.\nThere are a few options we can assume,\n\nLargest residual magnitudes\nFixed channel ordering"
+    "text": "Question regarding to the Residual Rank\nFrom the residual rank assignment, we can raise a question, ” which dimensions or channels are selected for residual correction?“(if \\(\\rho = 8\\), then 8 dimensions or channels should be corrected.). Since the paper only describes how many channels are selected (\\(\\rho \\in \\{0,2,4,8\\}\\)), we have to decide which channels are corrected by residuals.\nThere are a few options we can assume for selecting raw head dimensions,\n\nLargest residual magnitude\nChoose \\(S = \\text{TopK}_j(|r_j|, \\rho)\\). This is the simplest method, and it exactly minimizes the coordinate-masking residual error \\(||r-\\tilde{r}||^2_2\\) among all choices of \\(\\rho\\) raw coordinates.\nVariance-normalized magnitude\nSome channels may naturally have much larger scales than others. Instead of using \\(|r_j|\\), use use \\[s_j = \\frac{|r_j|}{\\sigma_{m,h,j}+ \\epsilon}\\]\nwhere \\(\\sigma_{m,h,j}\\) is the typical residual scale for that channel in the window and head.\nThen, select \\(S = \\text{TopK}_j(s_j, \\rho)\\). This detects unusually large residuals relative to the channel’s normal behavior, rather than always selecting naturally high-variance dimensions.\nFixed channel ordering\nGroup or block selection"
+  },
+  {
+    "objectID": "papers/moh.html",
+    "href": "papers/moh.html",
+    "title": "MOH: Multi-head Attention as Mixture of Heads",
+    "section": "",
+    "text": "This page reviews the paper (Jin et al. 2025) published and submitted on Oct 2024."
+  },
+  {
+    "objectID": "papers/moh.html#improvement-upon-the-multi-head-attention",
+    "href": "papers/moh.html#improvement-upon-the-multi-head-attention",
+    "title": "MOH: Multi-head Attention as Mixture of Heads",
+    "section": "Improvement upon the Multi-Head Attention",
+    "text": "Improvement upon the Multi-Head Attention\nThe Multi-head Attention mechanism has multiple attention heads which operate in parallel, and the final attention outputs are calculated as the sum of all heads. To improve the efficiency (with maintaining the similar accuracy) of this mechanism, the paper proposes a selection mechanism for tokens to select appropriate attention heads (Dynamic Attention head Routing Mechanism)."
+  },
+  {
+    "objectID": "papers/moh.html#mixture-of-experts",
+    "href": "papers/moh.html#mixture-of-experts",
+    "title": "MOH: Multi-head Attention as Mixture of Heads",
+    "section": "Mixture of Experts",
+    "text": "Mixture of Experts\nThe previous study, “Mixture of Experts (MOE)”, is the main motivation and methodology of this paper. It literally means that it chooses experts for a subset of model and combines those specialized subsets to process the information. Furthermore, it uses a special machine called a router which activates Top-K experts for each subset."
+  },
+  {
+    "objectID": "papers/moh.html#mixture-of-heads",
+    "href": "papers/moh.html#mixture-of-heads",
+    "title": "MOH: Multi-head Attention as Mixture of Heads",
+    "section": "Mixture of Heads",
+    "text": "Mixture of Heads\nMotivated by the MOE, the paper introduces Mixture of Head Attention, “MOH”. Instead of parameters scaling in regular MOE, they chooses attention heads as experts. Similar to MOE, it consists of h heads, \\(H = {H^1,...,H^h}\\), and a router that activates the Top-K attention heads."
+  },
+  {
+    "objectID": "papers/moh.html#more-about-methodology",
+    "href": "papers/moh.html#more-about-methodology",
+    "title": "MOH: Multi-head Attention as Mixture of Heads",
+    "section": "More about Methodology",
+    "text": "More about Methodology\n\nHeads as Experts\nThe MoH output can be calculated as\n\\[MoH(X, X') = \\sum_{i=1}^h g_iH^iW^i_O\\]\nwhere \\(X\\) and \\(X'\\) are input tokens, \\(g_i\\) is the routing score, \\(H_i\\) is the output of \\(i\\)-th attention head, and \\(W_O^i\\) is that Head’s portion of the output projection.\nSince \\(g_i = 0\\) when the head is inactive, the Top-K heads can be selected and activated based on the routing score.\nThere are two key advantages of MoH mentioned in the paper,\n\nMoH enables each token to select the most relevant attention heads, boosting inference efficiency while maintaining accuracy\nIn contrast to the standard summation in multi-head attention, the weighted summation in MoH enhances the flexibility of the attention mechanism and unlocks performance potential.\n\nIt is easy to understand the first key advantage but a bit vague about the second statement.\nwhy choosing a few heads instead of uniformly calculate all of them makes more flexibility, and what was the unresolved performance potential before MoH?\nThis can be answered by the details of methodology below.\n\n\nShared Heads\nAmong several attention heads, there are several heads that are always active for every token. The paper calls this as shared heads.\nFor \\(h\\) attention heads, we can define \\(h_s\\) as the number of shared heads, and \\(h-h_s\\) as number of routed heads.\n\\(H_1, ...,H^{h_s},H^{h_s+1},...,H^h\\)\nAs it shows above, first \\(h_s\\) heads are chosen to be the shared heads, and the main purpose of the shared heads is to capture the global common knowledge such as basic grammar or punctuation markers.\n\n\nTwo-stage Routing\nFrom the equation, \\[MoH(X, X') = \\sum_{i=1}^h g_iH^iW^i_O\\]\nThere are actually two stages to determine the routing score.\n\nStage 1: Balance the two head types\nThe model computes \\([\\alpha_1, \\alpha_2]=\\text{Softmax}(W_hx_t)\\)\nwhere \\(\\alpha_1\\) is the total importance assigned to shared heads group, and \\(\\alpha_2\\) is the total importance assigned to routed heads group.\nStage 2: Weight or select heads inside each group\nThe shared heads receive the probabilities, \\(p^{(s)} = \\text{Softmax}(W_sx_t)\\). Since shared heads are always active, their routing scores are calculated as \\(g_{t,i} = \\alpha_1 p^{(s)}\\), \\((1\\leq i \\leq h_s)\\).\nFor the routed heads, the router computes \\(p^{(r)} = \\text{Softmax}(W_rx_t)\\). Then only for Top-K routed heads, the routing scores are calculated as \\(g_{t,i} = \\alpha_2p^{(r)}\\).\nSo, the routing score is the mixture of head-type importance and individual-head importance.\nAnd this is also the main reason that MoH is flexible and increases its performance as it reflects the head-type importance and individual-head importance in a such way.\n\n\n\nLoad Balance Loss\nSince MoH only selects Top-K routed heads, the router may repeatedly select the same few heads without additional control. For example, if it is Top-1 model, one of Heads (say, Head 1) receives most tokens, and rest of Heads may receive almost none.\nWe call this as routing collapse.\nTo mitigate such problem, the paper introduces load balance loss on routed heads only.\n\\[\\mathcal{L}_b = \\sum_{h_s+1}^h P_if_i\\]\n\\[P_i = \\frac{1}{T}\\sum_{t=1}^T \\text{Softmax}(W_rx_t)_{i-h_s}\\]\n\\[f_i = \\frac{1}{T}\\sum_{t=1}^T 1(\\text{Token $x_t$ selects Head $i$})\\]\nAs it shows above, there are 3 equations for load balance loss.\n\\(T\\) is the total number of tokens in the training batch.\n\\(P_i\\) represents the average router probability assigned to Head \\(i\\) across the batch.\n\\(f_i\\) measures the actual fraction of tokens selecting head \\(i\\) after Top-K routing.\nIf we rewrite the loss as \\(\\mathcal{L}_b = \\frac{1}{T}\\sum_{t=1}^T \\sum_i f_i p_{t,i}\\)\nThen for one token router logit \\(z_{t,j}\\),\n\\[\\frac{\\partial \\mathcal{L}_b}{\\partial z_{t,j}} = \\frac{1}{T}p_{t,j}(f_j-\\sum_if_ip_{t,i})\\]\n\nOverused Head\nSuppose head \\(j\\) has a selection frequency larger than the probability-weighted average,\n\\[f_j &gt; \\sum_if_i p_{t,i}\\]\nThen\n\\[\\frac{\\partial \\mathcal{L}_b}{\\partial z_{t,j}} &gt; 0 \\]\nand gradient descent performs\n\\[z_{t,j} \\leftarrow z_{t,j}-\\eta\\frac{\\partial \\mathcal{L}_b}{\\partial z_{t,j}}\\]\nso the head’s logit decreases. Its future routing probability also decreases.\nOn the other hand, head’s logit increases and future routing probability increases for underused heads.\n\n\n\nTotal Training Objective\n\\[\\mathcal{L} = \\mathcal{L_{\\text{task}}} + \\beta \\mathcal{L}_b \\]\nThe toal objective is the summation of task loss \\(\\mathcal{L}_{\\text{task}}\\) and Balancing loss \\(\\mathcal{L}_b\\) with a parameter \\(\\beta\\).\nThe task loss may tell us “this head is particularly useful for this token”, and the balancing loss may tell us “this head is already receiving too many tokens across this batch”.\nThe parameter \\(\\beta\\) controls the trade-off between them. Depending on the scale of \\(\\beta\\), the routing can become highly specialized or balanced. In the paper, \\(\\beta\\) is set to 0.01 for all tasks."
+  },
+  {
+    "objectID": "papers/moh.html#experiments-image-classificationgeneration",
+    "href": "papers/moh.html#experiments-image-classificationgeneration",
+    "title": "MOH: Multi-head Attention as Mixture of Heads",
+    "section": "Experiments (Image Classification/Generation)",
+    "text": "Experiments (Image Classification/Generation)"
   }
 ]
