@@ -26,6 +26,11 @@ website:
             href: papers/dw-kv.qmd
           - text: "TurboQuant"
             href: paper/tq.qmd
+          - text: "Kimi-Linear"
+            href: paper/kimi_linear.qmd
+          - text: "Kimi K3"
+            href: paper/kimi_k3.qmd 
+            
             
       - text: "Study"
         menu: 
@@ -34,6 +39,9 @@ website:
           
           - text: "Digital Design and Computer Architecture"
             href: study/computer_arch.qmd
+          
+          - text: "Multi-head Latent Attention"
+            href: study/MoA.qmd
 
 format:
   html:

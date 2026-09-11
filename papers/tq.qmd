@@ -2,4 +2,3 @@
 title: "TurboQuant (Google Research) Paper Review "
 format: html
 ---
-

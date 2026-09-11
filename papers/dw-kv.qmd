@@ -97,8 +97,7 @@ A fused CUDA implementation means that several operations that would normally ru
 For DepthWeave-KV, the fused kernel combines
 
 $$ \scriptstyle
-\text{Basis Lookup} \rightarrow \text{Coefficient Multiplication} \rightarrow \text{Residual Dequantization} \rightarrow \text{KV Reconstruction} \rightarrow \text{Attention Computation}
-$$
+\text{Basis Lookup} \rightarrow \text{Coefficient Multiplication} \rightarrow \text{Residual Dequantization} \rightarrow \text{KV Reconstruction} \rightarrow \text{Attention Computation}$$
 
 Instead of storing full Key and Value matrix in a global memory, it uses stored shared basis, basis coefficients, quantized residual components, residual quantization metadata, routing information and learned gate parameters to calculate the attention output.
 
