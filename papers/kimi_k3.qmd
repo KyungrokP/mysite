@@ -73,7 +73,8 @@ $$L_t = \frac{1}{2}||\bar{S}_{t-1}^T k_t-v_t||^2 \\
 Therefore, $$ S_t = \bar{S}_{t-1} + \beta_t \nabla_S L_t = \bar{S}_{t-1} + k_t(\hat{v}_t - v_t)^T$$
 
 ### So what does $S_t$ represent?
-$S_t$ is simply a memory prediction. However, from the above illustration, we can view it in a more detailed way. 
+
+$S_t$ is simply a memory prediction. However, from the above illustration, we can view it in a more detailed way.
 
 From delta rule, we acknowledge that it uses the error term ($e_t$) and also accounts for decayed old memory by using channel-wise forgetting factor $\alpha_t$.
 
@@ -81,14 +82,29 @@ Thus, $S_t = \text{decayed old memory} (\alpha_t) + \text{prediction error corre
 
 In plain words, $S_t$ stores the memory for old states (more memory to fresh states) and also prediction error for current prediction. So, we can use the flexible memory $S_t$ to predict the current value for $k_t$.
 
-### How KDA parameterizes 
-There are several parameters which KDA generates for the model (KDA parameterizes the per-head quantities), 
+### How KDA parameterizes
+
+There are several parameters which KDA generates for the model (KDA parameterizes the per-head quantities),
 
 - $q_t^h, k_t^h = L_2Norm(Swish(ShortConv(W_{q/k}^hx_t))) \in \mathbb{R}^{d_k}$
 - $v_t^h = Swish(ShortConv(W_v^h x_t)) \in \mathbb{R}^{d_v}$
 - $\beta_t^h = Sigmoid(W_b^hx_t) \in (0,1)$
 - $z_t^h = W_{\alpha}^{\uparrow} W_{\alpha}^{\downarrow}x-t + b_\alpha^h \in \mathbb{R}^{d_k}$
 
-#### Query and Key generation 
+#### Query and Key generation
+
+$$q_t^h = k_t^h = L2Norm(Swish(ShortConv(W_{q/k}^hx_t))) \in \mathbb{R}^{d_k}$$
+
+The ShortConv (*short convolution*) involves current token and previous tokens by multiplying with their learned weights. For example, after query/key projection with the learned weights $W_{q/k}^h$ and input $x_t$,the ShortConv involves previous tokens to give more flexibility on feature extraction. (\*new learnable weights: $c_{i,t}$ for channel $i$ and token i, and early query projection: $q'_{t, i}$, Shortconv gives $\tilde{q}_{t,i} = c_{i,0}q_{t,i}' + c_{i,1}q'_{t-1, i} + c_{i,2}q_{t-2, i}'$).
+
+Then, use Swish activation function which has advantages over Relu as it activates negative values.
+
+Finally, we normalize (L2) these values for numerical stability.
+
+#### Value generation
+
+$$ Swish(ShortConv(W_v^hx_t)) \in \mathbb{R}^d_v$$ Value generation is almost same as key/query generation except it does not normalize as we need magnitude of the values for the final feature extraction.
+
+#### Delta-rule coefficient $\beta_t^h$ generation
 
 
