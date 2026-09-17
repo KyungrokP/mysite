@@ -25,11 +25,11 @@ website:
           - text: "DepthWeave-KV"
             href: papers/dw-kv.qmd
           - text: "TurboQuant"
-            href: paper/tq.qmd
+            href: papers/tq.qmd
           - text: "Kimi-Linear"
-            href: paper/kimi_linear.qmd
+            href: papers/kimi_linear.qmd
           - text: "Kimi K3"
-            href: paper/kimi_k3.qmd 
+            href: papers/kimi_k3.qmd 
             
             
       - text: "Study"
