@@ -1,0 +1,34 @@
+---
+title: "Biderctional vs. Causal masking (LCLM)"
+format: html
+---
+
+## About this study..
+
+From latent context language model (LCLM), the author highlights that (for encoder attention masking) LCLM performs better on Causal masking set-up than on bidirectional setting.
+
+Since the bidirection makes query to look at entire context or every token, it is natural to think that bidirectional setting would be more accurate. However, the encoder is based on the pre-trained Qwen model which is trained under causal attention, and the pooling from causal attention gives useful hierarchical/accumulating structure to the latent vectors.
+
+From these reasons, we can assume why causal attention performs better than bidirectional attention in LCLM.
+
+To confirm these facts, we will investigate bidirectional and causal attention with pooling on small LCLM.
+
+## Setting
+
+| Component         | Setting                    |
+|-------------------|----------------------------|
+| Encoder           | small transformer          |
+| Encoder mask      | causal Vs. bidirection     |
+| Encoder Window    | 256 tokens initially       |
+| Compression       | 4x                         |
+| Pooling           | mean                       |
+| Adapter           | 2 layer MLP                |
+| Decoder           | same small decoder         |
+| Dataset           | synthetic needle retrieval |
+| Initialization    | identical                  |
+| Training Steps    | identical                  |
+| Optimization / LR | identical                  |
+
+## Architecture
+
+$$X \rightarrow \text{Encoder} \rightarrow H \rightarrow \text{Mean Pool} \rightarrow \text{MLP Adapter} \rightarrow S \rightarrow \text{Decoder} \rightarrow \hat{y}$$

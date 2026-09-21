@@ -74,7 +74,7 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "Welcome to my website! My name is Kyungrok Park, and I am currently studying Economics and Applied Statistics in University of Toronto. My research is based on macroeconomics data in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in economic and statistic world. Enjoy!"
+    "text": "Welcome to my website! My name is Kyungrok Park, and I studied my Bachelor for Economics and Applied Statistics at University of Toronto. My research is mostly focused on efficient transformer models (especially, KV cache compression, and various compression methods). My secondary pursuit is about economics and finance in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in A.I. and economics, Enjoy! ## Education\nUniversity of Toronto, ON, Canada, B.A in Economics and Applied Statistics"
   },
   {
     "objectID": "index.html#education",
@@ -201,5 +201,33 @@
     "title": "Kimi K3 Paper Review",
     "section": "More about Hybrid Attention (3 KDAs + 1 Gated MLA)",
     "text": "More about Hybrid Attention (3 KDAs + 1 Gated MLA)\n\nKimi Delta Attention (KDA)\nKDA extends the delta-rule recurrence with a channel-wise forget gate \\[S_t = (I-\\beta_tk_tk_t^T)\\text{Diag}(\\alpha_t)S_{t-1}+\\beta_tk_tv_t^T\\] \\[ \\tilde{o}_t = S_t^Tq_t \\space \\text{(output)}\\] where \\(\\alpha_t \\in (0,1)^{d_k}\\) is the channel-wise one-step retention factor, and \\(\\beta_t \\in (0,1)\\) controls the delta-rule write strength\nFor channel-wise forgetting, it basically represents how much we retain each channel by using retention factor \\(\\alpha_t\\).\n\\[\\bar{S}_{t-1} = \\text{Diag}(\\alpha_t)S_{t-1}\\]\nwhere \\[\\text{Diag}(\\alpha_t)=\n\\begin{bmatrix}\n\\alpha_{t,1} & 0 & \\cdots \\\\\n0 & \\alpha_{t,2} & \\cdots \\\\\n\\vdots & \\vdots & \\ddots\n\\end{bmatrix}\\] Also, current prediction for \\(k_t\\) is \\(\\hat{V}_t = \\bar{S}_{t-1}^Tk^t\\).\n\nMore about Delta-rule\nA basic Hebbian update for the memory \\(S_t\\) is \\[S_t = \\bar{S}_{t-1} + \\beta_t k_t v_t\\] It is very simple and straightforward, but the problem is that even if the approximate value \\(\\hat{v}_t\\) is nearly correct, we need to compute the full vector \\(v_t\\) again, which can cause repeated information to be accumulated and interfere with other memories.\nTo mitigate this problem, we can use the prediction error \\(e_t = v_t - \\hat{v}_t\\). Then, the memory update is \\[S_t = \\bar{S}_{t-1} + \\beta_t k_t (v_t-\\bar{S}_{t-1}^T k_t)^T \\\\ = \\bar{S}_{t-1}+\\beta_tk_tv_t^T - \\beta_tk_tk_t^T\\bar{S}_{t-1} \\\\ = (I- \\beta_tk_tk_t^T) \\bar{S}_{t-1} + \\beta_t k_tv_t^T \\\\ = (I- \\beta_tk_tk_t^T)\\text{Diag}(\\alpha_t) S_{t-1} + \\beta_t k_t v_t^T\\] which is exactly stated in the paper.\nWe can also notice that it is simply a one gradient step on:\n\\[L_t = \\frac{1}{2}||\\bar{S}_{t-1}^T k_t-v_t||^2 \\\\\n\\nabla_S L_t  = k_t(\\hat{v}_t - v_t)^T\\]\nTherefore, \\[ S_t = \\bar{S}_{t-1} + \\beta_t \\nabla_S L_t = \\bar{S}_{t-1} + k_t(\\hat{v}_t - v_t)^T\\]\n\n\n\nSo what does \\(S_t\\) represent?\n\\(S_t\\) is simply a memory prediction. However, from the above illustration, we can view it in a more detailed way.\nFrom delta rule, we acknowledge that it uses the error term (\\(e_t\\)) and also accounts for decayed old memory by using channel-wise forgetting factor \\(\\alpha_t\\).\nThus, \\(S_t = \\text{decayed old memory} (\\alpha_t) + \\text{prediction error correction} (e_t)\\)\nIn plain words, \\(S_t\\) stores the memory for old states (more memory to fresh states) and also prediction error for current prediction. So, we can use the flexible memory \\(S_t\\) to predict the current value for \\(k_t\\).\n\n\nHow KDA parameterizes\nThere are several parameters which KDA generates for the model (KDA parameterizes the per-head quantities),\n\n\\(q_t^h, k_t^h = L_2Norm(Swish(ShortConv(W_{q/k}^hx_t))) \\in \\mathbb{R}^{d_k}\\)\n\\(v_t^h = Swish(ShortConv(W_v^h x_t)) \\in \\mathbb{R}^{d_v}\\)\n\\(\\beta_t^h = Sigmoid(W_b^hx_t) \\in (0,1)\\)\n\\(z_t^h = W_{\\alpha}^{\\uparrow} W_{\\alpha}^{\\downarrow}x-t + b_\\alpha^h \\in \\mathbb{R}^{d_k}\\)\n\n\nQuery and Key generation\n\\[q_t^h = k_t^h = L2Norm(Swish(ShortConv(W_{q/k}^hx_t))) \\in \\mathbb{R}^{d_k}\\]\nThe ShortConv (short convolution) involves current token and previous tokens by multiplying with their learned weights. For example, after query/key projection with the learned weights \\(W_{q/k}^h\\) and input \\(x_t\\),the ShortConv involves previous tokens to give more flexibility on feature extraction. (*new learnable weights: \\(c_{i,t}\\) for channel \\(i\\) and token i, and early query projection: \\(q'_{t, i}\\), Shortconv gives \\(\\tilde{q}_{t,i} = c_{i,0}q_{t,i}' + c_{i,1}q'_{t-1, i} + c_{i,2}q_{t-2, i}'\\)).\nThen, use Swish activation function which has advantages over Relu as it activates negative values.\nFinally, we normalize (L2) these values for numerical stability.\n\n\nValue generation\n\\[ Swish(ShortConv(W_v^hx_t)) \\in \\mathbb{R}^d_v\\] Value generation is almost same as key/query generation except it does not normalize as we need magnitude of the values for the final feature extraction.\n\n\nDelta-rule coefficient \\(\\beta_t^h\\) generation"
+  },
+  {
+    "objectID": "study/LCLM_masking.html",
+    "href": "study/LCLM_masking.html",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "",
+    "text": "From latent context language model (LCLM), the author highlights that (for encoder attention masking) LCLM performs better on Causal masking set-up than on bidirectional setting.\nSince the bidirection makes query to look at entire context or every token, it is natural to think that bidirectional setting would be more accurate. However, the encoder is based on the pre-trained Qwen model which is trained under causal attention, and the pooling from causal attention gives useful hierarchical/accumulating structure to the latent vectors.\nFrom these reasons, we can assume why causal attention performs better than bidirectional attention in LCLM.\nTo confirm these facts, we will investigate bidirectional and causal attention with pooling on small LCLM."
+  },
+  {
+    "objectID": "study/LCLM_masking.html#about-this-study..",
+    "href": "study/LCLM_masking.html#about-this-study..",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "",
+    "text": "From latent context language model (LCLM), the author highlights that (for encoder attention masking) LCLM performs better on Causal masking set-up than on bidirectional setting.\nSince the bidirection makes query to look at entire context or every token, it is natural to think that bidirectional setting would be more accurate. However, the encoder is based on the pre-trained Qwen model which is trained under causal attention, and the pooling from causal attention gives useful hierarchical/accumulating structure to the latent vectors.\nFrom these reasons, we can assume why causal attention performs better than bidirectional attention in LCLM.\nTo confirm these facts, we will investigate bidirectional and causal attention with pooling on small LCLM."
+  },
+  {
+    "objectID": "study/LCLM_masking.html#setting",
+    "href": "study/LCLM_masking.html#setting",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "Setting",
+    "text": "Setting\n\n\n\nComponent\nSetting\n\n\n\n\nEncoder\nsmall transformer\n\n\nEncoder mask\ncausal Vs. bidirection\n\n\nEncoder Window\n256 tokens initially\n\n\nCompression\n4x\n\n\nPooling\nmean\n\n\nAdapter\n2 layer MLP\n\n\nDecoder\nsame small decoder\n\n\nDataset\nsynthetic needle retrieval\n\n\nInitialization\nidentical\n\n\nTraining Steps\nidentical\n\n\nOptimization / LR\nidentical"
+  },
+  {
+    "objectID": "study/LCLM_masking.html#architecture",
+    "href": "study/LCLM_masking.html#architecture",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "Architecture",
+    "text": "Architecture\n\\[X \\rightarrow \\text{Encoder} \\rightarrow H \\rightarrow \\text{Mean Pool} \\rightarrow \\text{MLP Adapter} \\rightarrow S \\rightarrow \\text{Decoder} \\rightarrow \\hat{y}\\]"
   }
 ]

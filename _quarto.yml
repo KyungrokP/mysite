@@ -42,6 +42,9 @@ website:
           
           - text: "Multi-head Latent Attention"
             href: study/MoA.qmd
+            
+          - text: "Bidirection vs. Causal masking"
+            href: study/LCLM_masking.qmd
 
 format:
   html:
