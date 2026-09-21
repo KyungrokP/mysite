@@ -13,6 +13,7 @@ about:
 ---
 
 Welcome to my website! My name is Kyungrok Park, and I studied my Bachelor for Economics and Applied Statistics at University of Toronto. My research is mostly focused on efficient transformer models (especially, KV cache compression, and various compression methods). My secondary pursuit is about economics and finance in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in A.I. and economics, Enjoy!
+
 ## Education
 
 University of Toronto, ON, Canada, B.A in Economics and Applied Statistics
