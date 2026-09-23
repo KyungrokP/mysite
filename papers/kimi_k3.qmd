@@ -106,5 +106,3 @@ Finally, we normalize (L2) these values for numerical stability.
 $$ Swish(ShortConv(W_v^hx_t)) \in \mathbb{R}^d_v$$ Value generation is almost same as key/query generation except it does not normalize as we need magnitude of the values for the final feature extraction.
 
 #### Delta-rule coefficient $\beta_t^h$ generation
-
-

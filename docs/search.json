@@ -74,7 +74,7 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "Welcome to my website! My name is Kyungrok Park, and I studied my Bachelor for Economics and Applied Statistics at University of Toronto. My research is mostly focused on efficient transformer models (especially, KV cache compression, and various compression methods). My secondary pursuit is about economics and finance in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in A.I. and economics, Enjoy! ## Education\nUniversity of Toronto, ON, Canada, B.A in Economics and Applied Statistics"
+    "text": "Welcome to my website! My name is Kyungrok Park, and I studied my Bachelor for Economics and Applied Statistics at University of Toronto. My research is mostly focused on efficient transformer models (especially, KV cache compression, and various compression methods). My secondary pursuit is about economics and finance in a view of statistics. This website includes not only a description of myself, but also the materials that can induce your interest in A.I. and economics, Enjoy!"
   },
   {
     "objectID": "index.html#education",
@@ -228,6 +228,27 @@
     "href": "study/LCLM_masking.html#architecture",
     "title": "Biderctional vs. Causal masking (LCLM)",
     "section": "Architecture",
-    "text": "Architecture\n\\[X \\rightarrow \\text{Encoder} \\rightarrow H \\rightarrow \\text{Mean Pool} \\rightarrow \\text{MLP Adapter} \\rightarrow S \\rightarrow \\text{Decoder} \\rightarrow \\hat{y}\\]"
+    "text": "Architecture\n\\[X \\rightarrow \\text{Encoder} \\rightarrow H \\rightarrow \\text{Mean Pool} \\rightarrow \\text{MLP Adapter} \\rightarrow S \\rightarrow \\text{Decoder} \\rightarrow \\hat{y}\\]\n\nAs it is illustrated in the setting and architecture, the only difference is the attention mask in encoder. The other settings are same for both models."
+  },
+  {
+    "objectID": "study/LCLM_masking.html#about-the-dataset",
+    "href": "study/LCLM_masking.html#about-the-dataset",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "About the Dataset…",
+    "text": "About the Dataset…\nTo train and test the model, the needle retrieval task is chosen.\nIt is a very simple task to train and test the language model. First, we generate random tokens with a specific length (for example, it can be 5 random tokens: [32, 24, 52, 12, 97]). Then, we insert KEY in the random position (between numbers, for example: [32, 24, KEY, 52, 12, 97]). At the end, with a given query, we train the model to find the number comes after KEY.\nIn addition to the single needle retrieval task, the multi-key retrieval task is also implemented. It is basically same as the single needle retrieval task, but there are several keys in the sample, and the task is to find these keys with given queries (For example: [32,KEY_A, 24, KEY_B, 52, 12], QUERY_A and QUERY_B are the task to find the number comes after KEY_A and KEY_B accordingly.)\nAlso, before-key and before-after-key (Find number before KEY and find numbers which come before and after KEY) tasks are trained and tested for both models to verify whether the causal advantage is directly tied to the directionality.\nSo, the experiment looks like\n\\[\n\\begin{array}{c}\n\\text{Single after-key Retrieval} \\\\[6pt]\n\\downarrow \\\\[6pt]\n\\text{Multi after-key Retrieval} \\\\[6pt]\n\\downarrow \\\\[6pt]\n\\text{Multi before-key Retrieval} \\\\[6pt]\n\\downarrow \\\\[6pt]\n\\text{Multi before-after-key Retrieval (accessorial task)}\n\\end{array}\n\\] Since before-after task introduces extra changes at the same time: two targets instead of one, two output heads instead of one, a harder multitask objective, and a different loss, it becomes harder to know whether the cause was the encoder mask or simply the more difficult two-output task. So, we will focus more on the after-key and before-key Retrieval task.\n(*For the multi before-after-key retrieval, it needs two heads structure for the model, the detailed model structure is illustrated in the Appendix.)"
+  },
+  {
+    "objectID": "study/LCLM_masking.html#result",
+    "href": "study/LCLM_masking.html#result",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "Result",
+    "text": "Result"
+  },
+  {
+    "objectID": "study/LCLM_masking.html#appendix",
+    "href": "study/LCLM_masking.html#appendix",
+    "title": "Biderctional vs. Causal masking (LCLM)",
+    "section": "Appendix",
+    "text": "Appendix"
   }
 ]
