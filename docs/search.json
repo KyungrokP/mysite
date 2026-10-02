@@ -11,7 +11,7 @@
     "href": "projects.html",
     "title": "Project",
     "section": "",
-    "text": "Overview"
+    "text": "Several different methods are implemented to optimize the model (in a way of compression) and KV cache. First, we will explore LCLM (latent context language model) for inputs (during Encoder phase). Then, we apply random rotation on the key and use different bit quantizations on both keys and values with FP16 recent token window. Lastly, we apply MSE-optimized quantization and apply QJL residual correction on the error. (Random rotation, MSE-optimized quantization and QJL comes from the “TurboQuant”)\nTo mitigate the problem of extra variance from QJL, we will incorporate insights from matrix sketching (Especially, Hadamard transform)."
   },
   {
     "objectID": "projects/kv_cache.html",
@@ -242,7 +242,7 @@
     "href": "study/LCLM_masking.html#result",
     "title": "Biderctional vs. Causal masking (LCLM)",
     "section": "Result",
-    "text": "Result\nFor the Single after-key Retrieval task, both models (causal and bidirectional masks) show a high test accuracy and low test loss (1.0 and 0.001 accordingly).\nFor multi-key retrieval task, 6 different evaluations are measured during training and testing,\n\nTest accuracy\nTest cross-entropy loss\nMean probability assigned to correct token\naccuracy by correct quartile\nAccuracy by position within 4-token pooling block\nTraining loss/accuracy\n\n\n\n\n\n\n\n\n\n\n\nTask\nEncoder Mask\nTest Loss\nTest Accuracy\nMean Correct-Token Probability\n\n\n\n\nAfter-key\nCausal\n0.3986\n0.9245\n0.9182\n\n\nAfter-key\nBidirectional\n0.7317\n0.8395\n0.8079\n\n\nBefore-key\nCausal\n0.4956\n0.9055\n0.8777\n\n\nBefore-key\nBidirectional\n1.5431\n0.7190\n0.6978"
+    "text": "Result\nFor the Single after-key Retrieval task, both models (causal and bidirectional masks) show a high test accuracy and low test loss (1.0 and 0.001 accordingly).\nFor multi-key retrieval task, 6 different evaluations are measured during training and testing,\n\nTest accuracy\nTest cross-entropy loss\nMean probability assigned to correct token\naccuracy by correct quartile\nAccuracy by position within 4-token pooling block\nTraining loss/accuracy\n\n\nTest loss/accuracy, Mean correct-token probability result\n\n\n\n\n\n\n\n\n\n\nTask\nEncoder Mask\nTest Loss\nTest Accuracy\nMean Correct-Token Probability\n\n\n\n\nAfter-key\nCausal\n0.3986\n0.9245\n0.9182\n\n\nAfter-key\nBidirectional\n0.7317\n0.8395\n0.8079\n\n\nBefore-key\nCausal\n0.4956\n0.9055\n0.8777\n\n\nBefore-key\nBidirectional\n1.5431\n0.7190\n0.6978\n\n\n\n\n\nAccuracy by context/pooling-block position\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTraining Loss"
   },
   {
     "objectID": "study/LCLM_masking.html#appendix",
@@ -256,6 +256,62 @@
     "href": "chatbot.html",
     "title": "chatbot",
     "section": "",
-    "text": "Qwen AI Assistant\n\n\n⚪ Checking server...\n\n\n\n\n  \n\n Send"
+    "text": "Qwen AI Assistant\n\n\n⚪ Checking server...\n\n\n\n\n  \n\n\nSend"
+  },
+  {
+    "objectID": "study/quantization.html",
+    "href": "study/quantization.html",
+    "title": "Different types of Quantization",
+    "section": "",
+    "text": "Quantization is one of methods for data compression. There are several different techniques for quantizaiton, and below shows the quantization design space that we can change and design,\n\n\n\n\n\n\n\n\n\nAxis\nOption 1\nOption 2\nMain question\n\n\n\n\nRange\nSymmetric\nAsymmetric\nIs “zero” centred in the quantizer?\n\n\nSpacing\nUniform\nNon-uniform\nAre quantization levels equally spaced?\n\n\nUnit\nScalar\nVector/non-scalar\nQuantize each value independently or jointly?\n\n\nGranularity\nTensor/Channel/Token/Group\n\n\n\n\nObjective\nMin-max\nMSE/weighted error/ take-aware\nHow are scales/codebooks chosen?\n\n\nTransform\nNone\nRotation/scaling/learned transform\nChange distribution before quantization?\n\n\nPrecision\nFixed-bit\nMixed/adaptive-bit\nSame bit width everywhere?\n\n\nRepresentation\nInteger\nCodebook/FP formats/logarithmic\nwhat are quantized values represented as?\n\n\nCorrection\nNone\nResidual/outlier correction\nKeep some information separately?\n\n\n\n*It will also be a very great note and reminder for KV cache experiment"
+  },
+  {
+    "objectID": "study/quantization.html#about-this-study..",
+    "href": "study/quantization.html#about-this-study..",
+    "title": "Different types of Quantization",
+    "section": "",
+    "text": "Quantization is one of methods for data compression. There are several different techniques for quantizaiton, and below shows the quantization design space that we can change and design,\n\n\n\n\n\n\n\n\n\nAxis\nOption 1\nOption 2\nMain question\n\n\n\n\nRange\nSymmetric\nAsymmetric\nIs “zero” centred in the quantizer?\n\n\nSpacing\nUniform\nNon-uniform\nAre quantization levels equally spaced?\n\n\nUnit\nScalar\nVector/non-scalar\nQuantize each value independently or jointly?\n\n\nGranularity\nTensor/Channel/Token/Group\n\n\n\n\nObjective\nMin-max\nMSE/weighted error/ take-aware\nHow are scales/codebooks chosen?\n\n\nTransform\nNone\nRotation/scaling/learned transform\nChange distribution before quantization?\n\n\nPrecision\nFixed-bit\nMixed/adaptive-bit\nSame bit width everywhere?\n\n\nRepresentation\nInteger\nCodebook/FP formats/logarithmic\nwhat are quantized values represented as?\n\n\nCorrection\nNone\nResidual/outlier correction\nKeep some information separately?\n\n\n\n*It will also be a very great note and reminder for KV cache experiment"
+  },
+  {
+    "objectID": "study/quantization.html#uniform-quantization",
+    "href": "study/quantization.html#uniform-quantization",
+    "title": "Different types of Quantization",
+    "section": "Uniform quantization",
+    "text": "Uniform quantization\nIt is the basic type of quantization.\nThe quantized value of x can be calculated as\n\\[Q(x) = \\Delta\\cdot \\text{round}(\\frac{x}{\\Delta})\\]\nwhere \\(\\Delta\\) is the constant quantization step size.\nIt also emphasizes the defining property of unifrom quantization:\n\\[q_{i+1} - q_i = \\Delta\\]\nThe important part is that adjacent reconstruction levels are always separated by the same amount: \\[ \\Delta \\]"
+  },
+  {
+    "objectID": "study/quantization.html#symmetric-quantization",
+    "href": "study/quantization.html#symmetric-quantization",
+    "title": "Different types of Quantization",
+    "section": "Symmetric quantization",
+    "text": "Symmetric quantization\nIt is a special case of uniform quantization,\nWe rougly assume \\[x_{min} \\approx -x_{max}\\]\nDefine \\[ a= \\text{max}|x|\\] For signed b-bit quantization: \\[Q_max = 2^{b-1}-1\\]. Then, \\[s = \\frac{a}{Q_{max}}\\] and \\[q = \\text{clip}(\\text{round}(x/s), -Q_{max}, Q_{max}).\\]\nReconstruction becomes: \\[ \\hat{x}=sq\\]\nIt is very simple since \\(x \\approx sq\\), and zero-point doesn’t need to be stored. However, since it forces to create the symmetric range, there would be many wasted levels if the original values are not distributed symmetrically."
+  },
+  {
+    "objectID": "study/quantization.html#asymmetricnon-symmetric-quantization",
+    "href": "study/quantization.html#asymmetricnon-symmetric-quantization",
+    "title": "Different types of Quantization",
+    "section": "Asymmetric/non-symmetric quantization",
+    "text": "Asymmetric/non-symmetric quantization\nSo, instead of forcing the range to be centred at zero, we use the actual range: \\[[x_{min}, x_{max}]\\]\nFor b bits:\n\\[ q_{min} = 0, q_{max} =2^b-1.\\]\nScale:\n\\[s = \\frac{x_{max}-x_{min}}{q_{max}-q_{min}}\\]\nZero point:\n\\[z = \\text{round}(q_{min} - \\frac{x_{min}}{s})\\]\nQuantization:\n\\[q = \\text{clip}(\\text{round}(x/s)+z)\\]\nReconstruction:\n\\[ \\hat{x}=s(q-z).\\]"
+  },
+  {
+    "objectID": "study/quantization.html#distinction-between-uniformnon-uniform-and-symmetricasymmetric",
+    "href": "study/quantization.html#distinction-between-uniformnon-uniform-and-symmetricasymmetric",
+    "title": "Different types of Quantization",
+    "section": "Distinction between Uniform/non-uniform and Symmetric/asymmetric",
+    "text": "Distinction between Uniform/non-uniform and Symmetric/asymmetric\nSymmetric/asymmetric tells us where the quantization interval lies.\nUniform/non-uniform tells us how the levels are spaced.\nSo, we can have symmetric + uniform or asymmetric + uniform or even symmetric + non-uniform.\n(Also, we can distinguish very easily by observing a zero-point \\(z\\) (for symmetric vs. asymmetric cases).)"
+  },
+  {
+    "objectID": "study/quantization.html#code",
+    "href": "study/quantization.html#code",
+    "title": "Different types of Quantization",
+    "section": "Code",
+    "text": "Code"
+  },
+  {
+    "objectID": "projects.html#kv-cache-experiment",
+    "href": "projects.html#kv-cache-experiment",
+    "title": "Project",
+    "section": "",
+    "text": "Several different methods are implemented to optimize the model (in a way of compression) and KV cache. First, we will explore LCLM (latent context language model) for inputs (during Encoder phase). Then, we apply random rotation on the key and use different bit quantizations on both keys and values with FP16 recent token window. Lastly, we apply MSE-optimized quantization and apply QJL residual correction on the error. (Random rotation, MSE-optimized quantization and QJL comes from the “TurboQuant”)\nTo mitigate the problem of extra variance from QJL, we will incorporate insights from matrix sketching (Especially, Hadamard transform)."
   }
 ]
