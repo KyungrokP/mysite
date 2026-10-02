@@ -3,3 +3,10 @@ title: "Project"
 ---
 
 # Overview
+
+## KV cache experiment 
+Several different methods are implemented to optimize the model (in a way of compression) and KV cache. First, we will explore LCLM (latent context language model) for inputs (during Encoder phase). Then, we apply random rotation on the key and use different bit quantizations on both keys and values with FP16 recent token window. Lastly, we apply MSE-optimized quantization and apply QJL residual correction on the error. (Random rotation, MSE-optimized quantization and QJL comes from the "TurboQuant")
+
+To mitigate the problem of extra variance from QJL, we will  incorporate insights from matrix sketching (Especially, Hadamard transform). 
+
+

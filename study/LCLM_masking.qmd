@@ -77,7 +77,7 @@ For multi-key retrieval task, 6 different evaluations are measured during traini
 ### Test loss/accuracy, Mean correct-token probability result
 
 | Task | Encoder Mask | Test Loss | Test Accuracy | Mean Correct-Token Probability |
-|----|----|----|----|----|
+|---------------|---------------|---------------|---------------|---------------|
 | After-key | Causal | 0.3986 | 0.9245 | 0.9182 |
 | After-key | Bidirectional | 0.7317 | 0.8395 | 0.8079 |
 | Before-key | Causal | 0.4956 | 0.9055 | 0.8777 |

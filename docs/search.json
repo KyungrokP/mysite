@@ -242,7 +242,7 @@
     "href": "study/LCLM_masking.html#result",
     "title": "Biderctional vs. Causal masking (LCLM)",
     "section": "Result",
-    "text": "Result\nFor the Single after-key Retrieval task, both models (causal and bidirectional masks) show a high test accuracy and low test loss (1.0 and 0.001 accordingly).\nFor multi-key retrieval task, 6 different evaluations are measured during training and testing,\n\nTest accuracy\nTest cross-entropy loss\nMean probability assigned to correct token\naccuracy by correct quartile\nAccuracy by position within 4-token pooling block\nTraining loss/accuracy\n\n\nTest loss/accuracy, Mean correct-token probability result\n\n\n\n\n\n\n\n\n\n\nTask\nEncoder Mask\nTest Loss\nTest Accuracy\nMean Correct-Token Probability\n\n\n\n\nAfter-key\nCausal\n0.3986\n0.9245\n0.9182\n\n\nAfter-key\nBidirectional\n0.7317\n0.8395\n0.8079\n\n\nBefore-key\nCausal\n0.4956\n0.9055\n0.8777\n\n\nBefore-key\nBidirectional\n1.5431\n0.7190\n0.6978\n\n\n\n\n\nAccuracy by context/pooling-block position\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTraining Loss"
+    "text": "Result\nFor the Single after-key Retrieval task, both models (causal and bidirectional masks) show a high test accuracy and low test loss (1.0 and 0.001 accordingly).\nFor multi-key retrieval task, 6 different evaluations are measured during training and testing,\n\nTest accuracy\nTest cross-entropy loss\nMean probability assigned to correct token\naccuracy by correct quartile\nAccuracy by position within 4-token pooling block\nTraining loss/accuracy\n\n\n\n\n\n\n\n\n\n\n\nTask\nEncoder Mask\nTest Loss\nTest Accuracy\nMean Correct-Token Probability\n\n\n\n\nAfter-key\nCausal\n0.3986\n0.9245\n0.9182\n\n\nAfter-key\nBidirectional\n0.7317\n0.8395\n0.8079\n\n\nBefore-key\nCausal\n0.4956\n0.9055\n0.8777\n\n\nBefore-key\nBidirectional\n1.5431\n0.7190\n0.6978"
   },
   {
     "objectID": "study/LCLM_masking.html#appendix",
@@ -250,5 +250,12 @@
     "title": "Biderctional vs. Causal masking (LCLM)",
     "section": "Appendix",
     "text": "Appendix"
+  },
+  {
+    "objectID": "chatbot.html",
+    "href": "chatbot.html",
+    "title": "chatbot",
+    "section": "",
+    "text": "Qwen AI Assistant\n\n\n⚪ Checking server...\n\n\n\n\n  \n\n Send"
   }
 ]

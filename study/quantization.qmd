@@ -1,0 +1,86 @@
+---
+title: "Different types of Quantization"
+format: html
+---
+
+## About this study..
+
+**Quantization** is one of methods for data compression. There are several different techniques for quantizaiton, and below shows the quantization design space that we can change and design,
+
+| Axis | Option 1 | Option 2 | Main question |
+|------------------|------------------|------------------|------------------|
+| Range | Symmetric | Asymmetric | Is "zero" centred in the quantizer? |
+| Spacing | Uniform | Non-uniform | Are quantization levels equally spaced? |
+| Unit | Scalar | Vector/non-scalar | Quantize each value independently or jointly? |
+| Granularity | Tensor/Channel/Token/Group |  |  |
+| Objective | Min-max | MSE/weighted error/ take-aware | How are scales/codebooks chosen? |
+| Transform | None | Rotation/scaling/learned transform | Change distribution before quantization? |
+| Precision | Fixed-bit | Mixed/adaptive-bit | Same bit width everywhere? |
+| Representation | Integer | Codebook/FP formats/logarithmic | what are quantized values represented as? |
+| Correction | None | Residual/outlier correction | Keep some information separately? |
+
+*\*It will also be a very great note and reminder for KV cache experiment*
+
+## Uniform quantization
+
+It is the basic type of quantization.
+
+The quantized value of x can be calculated as
+
+$$Q(x) = \Delta\cdot \text{round}(\frac{x}{\Delta})$$
+
+where $\Delta$ is the constant quantization step size.
+
+It also emphasizes the defining property of unifrom quantization:
+
+$$q_{i+1} - q_i = \Delta$$
+
+The important part is that adjacent reconstruction levels are always separated by the same amount: $$ \Delta $$
+
+## Symmetric quantization
+
+It is a special case of uniform quantization,
+
+We rougly assume $$x_{min} \approx -x_{max}$$
+
+Define $$ a= \text{max}|x|$$ For signed b-bit quantization: $$Q_max = 2^{b-1}-1$$. Then, $$s = \frac{a}{Q_{max}}$$ and $$q = \text{clip}(\text{round}(x/s), -Q_{max}, Q_{max}).$$
+
+Reconstruction becomes: $$ \hat{x}=sq$$
+
+It is very simple since $x \approx sq$, and zero-point doesn't need to be stored. However, since it forces to create the symmetric range, there would be many wasted levels if the original values are not distributed symmetrically.
+
+## Asymmetric/non-symmetric quantization
+
+So, instead of forcing the range to be centred at zero, we use the actual range: $$[x_{min}, x_{max}]$$
+
+For b bits:
+
+$$ q_{min} = 0, q_{max} =2^b-1.$$
+
+Scale:
+
+$$s = \frac{x_{max}-x_{min}}{q_{max}-q_{min}}$$
+
+Zero point:
+
+$$z = \text{round}(q_{min} - \frac{x_{min}}{s})$$
+
+Quantization:
+
+$$q = \text{clip}(\text{round}(x/s)+z)$$
+
+Reconstruction:
+
+$$ \hat{x}=s(q-z).$$
+
+## Distinction between Uniform/non-uniform and Symmetric/asymmetric
+
+Symmetric/asymmetric tells us where the quantization interval lies.
+
+Uniform/non-uniform tells us how the levels are spaced.
+
+So, we can have **symmetric + uniform** or **asymmetric + uniform** or even **symmetric + non-uniform**.
+
+(Also, we can distinguish very easily by observing a zero-point $z$ (for symmetric vs. asymmetric cases).)
+
+## Code

@@ -45,6 +45,9 @@ website:
             
           - text: "Bidirection vs. Causal masking"
             href: study/LCLM_masking.qmd
+            
+          - text: "Quantization Designs"
+            href: study/quantization.qmd
 
 format:
   html:
