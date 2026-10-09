@@ -2,7 +2,7 @@ project:
   type: website
   output-dir: docs
   resources: 
-    - google1234567890abcdef.html
+    - googlea3b826f60b687dc6.html
   
 website:
   title: "mysite"
