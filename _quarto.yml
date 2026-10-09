@@ -1,7 +1,9 @@
 project:
   type: website
   output-dir: docs
-
+  resources: 
+    - google1234567890abcdef.html
+  
 website:
   title: "mysite"
   navbar:
@@ -49,6 +51,7 @@ website:
           - text: "Quantization Designs"
             href: study/quantization.qmd
     search: true
+    site-url: https://kyungrokp.github.io/mysite/
 
 format:
   html:
