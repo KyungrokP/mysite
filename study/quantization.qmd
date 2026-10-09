@@ -83,4 +83,30 @@ So, we can have **symmetric + uniform** or **asymmetric + uniform** or even **sy
 
 (Also, we can distinguish very easily by observing a zero-point $z$ (for symmetric vs. asymmetric cases).)
 
+## Scalar and Vector quantization
+
+All of the above quantization method can be scalar
+
+For a vector $$ x=[x_1,x_2,x_3,x_4]$$,
+
+we quantize independently: $$Q(x) = [Q(x_1), Q(x_2), Q(x_3), Q(x_4)]$$
+
+For vector quantization, instead of quantizing them independently, we treat $\textbf{x}=[x_1,x_2,x_3,x_4]$ as one object.
+
+If there's a learned codebook $$C={c_1,c_2,..,c_M}.$$ Each $c_i\in \mathbb{R}^4$. Then choose $$i^*=\text{arg min}_i || \textbf{x}-c_i||_2^2$$ Instead of storing four quantized integers, we store $i^*$.
+
+The advantage of vector quantization is that it captures correlation. For KV cache, dimensions are not necessarily statistically independent, so in principle: $$VQ(K)$$ could outperform scalar INT4 at the same theoretical number of bits.
+
+But the problem is that codebook lookup is significanlty harder and potentially slower.
+
+## Product quantization
+
+Product quantization is similar to the vector quantiation. However, instead of calculating the whole dimensions, we split it into smaller dimensions. For example, for a key vector, $K_t \in \mathbb{R}^64$, we split it: $$ K_t = [K_t^{(1)}, K_t^{(2)}, ... , K_t^{(8)}]$$. Then each subvector has dimension 8, and we independently ector quantize $$K_t^{(j)} \rightarrow c_{i_j}^{(j)} $$
+
+and store $$[i_1, i_2,...,i_8]$$
+
+## Granularity 
+
+## Min-max quantization
+
 ## Code

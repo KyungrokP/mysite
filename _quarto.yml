@@ -48,6 +48,7 @@ website:
             
           - text: "Quantization Designs"
             href: study/quantization.qmd
+    search: true
 
 format:
   html:

@@ -4050,7 +4050,7 @@ window.Quarto = {
  <span class="dropdown-text">Digital Design and Computer Architecture</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../study/MoA.html">
+    <a class="dropdown-item" href="../study/MoA.qmd">
  <span class="dropdown-text">Multi-head Latent Attention</span></a>
   </li>  
         <li>
@@ -4084,6 +4084,10 @@ window.Quarto = {
   <li><a href="#symmetric-quantization" id="toc-symmetric-quantization" class="nav-link" data-scroll-target="#symmetric-quantization">Symmetric quantization</a></li>
   <li><a href="#asymmetricnon-symmetric-quantization" id="toc-asymmetricnon-symmetric-quantization" class="nav-link" data-scroll-target="#asymmetricnon-symmetric-quantization">Asymmetric/non-symmetric quantization</a></li>
   <li><a href="#distinction-between-uniformnon-uniform-and-symmetricasymmetric" id="toc-distinction-between-uniformnon-uniform-and-symmetricasymmetric" class="nav-link" data-scroll-target="#distinction-between-uniformnon-uniform-and-symmetricasymmetric">Distinction between Uniform/non-uniform and Symmetric/asymmetric</a></li>
+  <li><a href="#scalar-and-vector-quantization" id="toc-scalar-and-vector-quantization" class="nav-link" data-scroll-target="#scalar-and-vector-quantization">Scalar and Vector quantization</a></li>
+  <li><a href="#product-quantization" id="toc-product-quantization" class="nav-link" data-scroll-target="#product-quantization">Product quantization</a></li>
+  <li><a href="#granularity" id="toc-granularity" class="nav-link" data-scroll-target="#granularity">Granularity</a></li>
+  <li><a href="#min-max-quantization" id="toc-min-max-quantization" class="nav-link" data-scroll-target="#min-max-quantization">Min-max quantization</a></li>
   <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code">Code</a></li>
   </ul>
 </nav>
@@ -4225,6 +4229,27 @@ window.Quarto = {
 <p>Uniform/non-uniform tells us how the levels are spaced.</p>
 <p>So, we can have <strong>symmetric + uniform</strong> or <strong>asymmetric + uniform</strong> or even <strong>symmetric + non-uniform</strong>.</p>
 <p>(Also, we can distinguish very easily by observing a zero-point <span class="math inline">\(z\)</span> (for symmetric vs. asymmetric cases).)</p>
+</section>
+<section id="scalar-and-vector-quantization" class="level2">
+<h2 class="anchored" data-anchor-id="scalar-and-vector-quantization">Scalar and Vector quantization</h2>
+<p>All of the above quantization method can be scalar</p>
+<p>For a vector <span class="math display">\[ x=[x_1,x_2,x_3,x_4]\]</span>,</p>
+<p>we quantize independently: <span class="math display">\[Q(x) = [Q(x_1), Q(x_2), Q(x_3), Q(x_4)]\]</span></p>
+<p>For vector quantization, instead of quantizing them independently, we treat <span class="math inline">\(\textbf{x}=[x_1,x_2,x_3,x_4]\)</span> as one object.</p>
+<p>If there’s a learned codebook <span class="math display">\[C={c_1,c_2,..,c_M}.\]</span> Each <span class="math inline">\(c_i\in \mathbb{R}^4\)</span>. Then choose <span class="math display">\[i^*=\text{arg min}_i || \textbf{x}-c_i||_2^2\]</span> Instead of storing four quantized integers, we store <span class="math inline">\(i^*\)</span>.</p>
+<p>The advantage of vector quantization is that it captures correlation. For KV cache, dimensions are not necessarily statistically independent, so in principle: <span class="math display">\[VQ(K)\]</span> could outperform scalar INT4 at the same theoretical number of bits.</p>
+<p>But the problem is that codebook lookup is significanlty harder and potentially slower.</p>
+</section>
+<section id="product-quantization" class="level2">
+<h2 class="anchored" data-anchor-id="product-quantization">Product quantization</h2>
+<p>Product quantization is similar to the vector quantiation. However, instead of calculating the whole dimensions, we split it into smaller dimensions. For example, for a key vector, <span class="math inline">\(K_t \in \mathbb{R}^64\)</span>, we split it: <span class="math display">\[ K_t = [K_t^{(1)}, K_t^{(2)}, ... , K_t^{(8)}]\]</span>. Then each subvector has dimension 8, and we independently ector quantize <span class="math display">\[K_t^{(j)} \rightarrow c_{i_j}^{(j)} \]</span></p>
+<p>and store <span class="math display">\[[i_1, i_2,...,i_8]\]</span></p>
+</section>
+<section id="granularity" class="level2">
+<h2 class="anchored" data-anchor-id="granularity">Granularity</h2>
+</section>
+<section id="min-max-quantization" class="level2">
+<h2 class="anchored" data-anchor-id="min-max-quantization">Min-max quantization</h2>
 </section>
 <section id="code" class="level2">
 <h2 class="anchored" data-anchor-id="code">Code</h2>

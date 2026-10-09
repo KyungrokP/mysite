@@ -1,0 +1,176 @@
+---
+title: "chatbot"
+format: html
+---
+
+::::: chat-container
+<h2>Qwen AI Assistant</h2>
+
+::: {#server-status}
+```         
+⚪ Checking server...
+```
+:::
+
+::: {#chat-output}
+:::
+
+```{=html}
+<textarea
+    id="user-message"
+    placeholder="Ask something..."
+    rows="4">
+  </textarea>
+```
+
+<br>
+
+<button onclick="sendMessage()"> Send </button>
+:::::
+
+```{=html}
+<script>
+
+const API_URL = "http://127.0.0.1:8000";
+
+async function checkServer() {
+
+    const status = document.getElementById("server-status");
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/health`,
+            {
+                signal: AbortSignal.timeout(3000)
+            }
+        );
+
+        if (response.ok) {
+
+            const data = await response.json();
+
+            status.innerHTML =
+                `🟢 Server Online — ${data.model}`;
+
+        } else {
+
+            status.innerHTML =
+                "🔴 Server Offline";
+
+        }
+
+    } catch (error) {
+
+        status.innerHTML =
+            "🔴 Server Offline";
+
+    }
+}
+
+
+async function sendMessage() {
+
+    const input =
+        document.getElementById("user-message");
+
+    const output =
+        document.getElementById("chat-output");
+
+    const message =
+        input.value.trim();
+
+
+    if (!message) {
+        return;
+    }
+
+
+    output.innerHTML += `
+        <p>
+            <strong>You:</strong>
+            ${message}
+        </p>
+    `;
+
+
+    input.value = "";
+
+
+    output.innerHTML += `
+        <p id="thinking">
+            <strong>Qwen:</strong>
+            Thinking...
+        </p>
+    `;
+
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/chat`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: message
+                })
+            }
+        );
+
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "thinking"
+        ).remove();
+
+
+        output.innerHTML += `
+            <p>
+                <strong>Qwen:</strong>
+                ${data.response}
+            </p>
+        `;
+
+
+    } catch (error) {
+
+        const thinking =
+            document.getElementById("thinking");
+
+        if (thinking) {
+            thinking.remove();
+        }
+
+
+        output.innerHTML += `
+            <p>
+                🔴 AI server unavailable.
+            </p>
+        `;
+
+    }
+}
+
+
+checkServer();
+
+setInterval(
+    checkServer,
+    15000
+);
+
+</script>
+```

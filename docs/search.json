@@ -313,5 +313,89 @@
     "title": "Project",
     "section": "",
     "text": "Several different methods are implemented to optimize the model (in a way of compression) and KV cache. First, we will explore LCLM (latent context language model) for inputs (during Encoder phase). Then, we apply random rotation on the key and use different bit quantizations on both keys and values with FP16 recent token window. Lastly, we apply MSE-optimized quantization and apply QJL residual correction on the error. (Random rotation, MSE-optimized quantization and QJL comes from the “TurboQuant”)\nTo mitigate the problem of extra variance from QJL, we will incorporate insights from matrix sketching (Especially, Hadamard transform)."
+  },
+  {
+    "objectID": "study/sketching.html",
+    "href": "study/sketching.html",
+    "title": "Matrix Sketching",
+    "section": "",
+    "text": "This page is created as the study note for matrix sketching from the original textbook, “Sketching as a Tool for Numerical Linear Algebra” by David P. Woodruff."
+  },
+  {
+    "objectID": "study/sketching.html#subspace-embedding",
+    "href": "study/sketching.html#subspace-embedding",
+    "title": "Matrix Sketching",
+    "section": "Subspace Embedding",
+    "text": "Subspace Embedding\n\nDefinition 1 (Subspace Embedding)"
+  },
+  {
+    "objectID": "study/MLA.html#idea-of-mla",
+    "href": "study/MLA.html#idea-of-mla",
+    "title": "Multi-head Latent Attention",
+    "section": "Idea of MLA",
+    "text": "Idea of MLA"
+  },
+  {
+    "objectID": "study/MLA.html#reconstruction",
+    "href": "study/MLA.html#reconstruction",
+    "title": "Multi-head Latent Attention",
+    "section": "Reconstruction",
+    "text": "Reconstruction"
+  },
+  {
+    "objectID": "study/MLA.html#reason-mla-can-maintain-a-good-model-quality",
+    "href": "study/MLA.html#reason-mla-can-maintain-a-good-model-quality",
+    "title": "Multi-head Latent Attention",
+    "section": "Reason MLA can maintain a good model quality",
+    "text": "Reason MLA can maintain a good model quality"
+  },
+  {
+    "objectID": "study/MLA.html#difference-between-mla-and-lclm",
+    "href": "study/MLA.html#difference-between-mla-and-lclm",
+    "title": "Multi-head Latent Attention",
+    "section": "Difference between MLA and LCLM",
+    "text": "Difference between MLA and LCLM"
+  },
+  {
+    "objectID": "study/MLA.html#can-we-combine-mla-and-lclm",
+    "href": "study/MLA.html#can-we-combine-mla-and-lclm",
+    "title": "Multi-head Latent Attention",
+    "section": "Can we combine MLA and LCLM?",
+    "text": "Can we combine MLA and LCLM?"
+  },
+  {
+    "objectID": "study/quantization.html#scalar-and-vector-quantization",
+    "href": "study/quantization.html#scalar-and-vector-quantization",
+    "title": "Different types of Quantization",
+    "section": "Scalar and Vector quantization",
+    "text": "Scalar and Vector quantization\nAll of the above quantization method can be scalar\nFor a vector \\[ x=[x_1,x_2,x_3,x_4]\\],\nwe quantize independently: \\[Q(x) = [Q(x_1), Q(x_2), Q(x_3), Q(x_4)]\\]\nFor vector quantization, instead of quantizing them independently, we treat \\(\\textbf{x}=[x_1,x_2,x_3,x_4]\\) as one object.\nIf there’s a learned codebook \\[C={c_1,c_2,..,c_M}.\\] Each \\(c_i\\in \\mathbb{R}^4\\). Then choose \\[i^*=\\text{arg min}_i || \\textbf{x}-c_i||_2^2\\] Instead of storing four quantized integers, we store \\(i^*\\).\nThe advantage of vector quantization is that it captures correlation. For KV cache, dimensions are not necessarily statistically independent, so in principle: \\[VQ(K)\\] could outperform scalar INT4 at the same theoretical number of bits.\nBut the problem is that codebook lookup is significanlty harder and potentially slower."
+  },
+  {
+    "objectID": "study/quantization.html#product-quantization",
+    "href": "study/quantization.html#product-quantization",
+    "title": "Different types of Quantization",
+    "section": "Product quantization",
+    "text": "Product quantization\nProduct quantization is similar to the vector quantiation. However, instead of calculating the whole dimensions, we split it into smaller dimensions. For example, for a key vector, \\(K_t \\in \\mathbb{R}^64\\), we split it: \\[ K_t = [K_t^{(1)}, K_t^{(2)}, ... , K_t^{(8)}]\\]. Then each subvector has dimension 8, and we independently ector quantize \\[K_t^{(j)} \\rightarrow c_{i_j}^{(j)} \\]\nand store \\[[i_1, i_2,...,i_8]\\]"
+  },
+  {
+    "objectID": "study/quantization.html#granularity",
+    "href": "study/quantization.html#granularity",
+    "title": "Different types of Quantization",
+    "section": "Granularity",
+    "text": "Granularity"
+  },
+  {
+    "objectID": "study/quantization.html#min-max-quantization",
+    "href": "study/quantization.html#min-max-quantization",
+    "title": "Different types of Quantization",
+    "section": "Min-max quantization",
+    "text": "Min-max quantization"
+  },
+  {
+    "objectID": "study/sketching.html#frobenius-norm-error",
+    "href": "study/sketching.html#frobenius-norm-error",
+    "title": "Matrix Sketching",
+    "section": "Frobenius norm error",
+    "text": "Frobenius norm error\n\nDefinition 2 (Frobenius norm error) we will say a k-dimensional supspace of \\(\\mathbb{R}^d\\) spans a \\((1+\\varepsilon)\\) rank-k approximation to A if \\[ ||A-ALL^T||_F \\leq (1+\\varepsilon)||A-A_k||_F\\] where \\(LL^T\\) is the projection operator onto that subspace.\n\nThe textbook explains this by thinking each row of \\(A\\) as a data point, \\(a_i\\). If \\(L \\in \\mathbb{R}^{d \\times k}\\) have orthonormal columns: \\(L^TL = I_k\\), then \\(P_L=LL^T\\) is the orthogonal projection matrix onto the subspace spanned by the columns of \\(L\\).\nSo, \\(ALL^T\\) means project every row of A onto the subspace \\(L\\), and therefore, \\(A-ALL^T\\) contains the projection error for every data point (row).\n*The Frobenius norm \\(||A-ALL^T||_F\\) is the sum of all squared distances: \\(||A-ALL^T||_F = \\sum_{i=2}^n||a_i-P_La_i||_2^2\\)\nAlso, \\(A_k\\) represents the best rank-k approximation to A obtained by truncated SVD. By Eckart-Young theorem, \\(||A-A_k||_F = \\text{min}_{\\text{rank}(B) \\leq k}||A-B||_F\\).\nSo, \\(||A-A_k||\\) is the smallest possible rank-k error.\n*The term \\((1+\\varepsilon)\\) allows slightly worse solution.\n\nImportant Idea\nInstead of knowing the ideal k-dimensional subspace, we find some larger subspace \\(L \\subseteq \\mathbb{R}^d\\) perhaps of dimension \\(r &gt;k\\).\nSuppose, we’re guaranteed that somewhere inside \\(L\\) there exists a good k-dimensional subspace \\(L_0 \\subseteq L\\) such that \\(||A-P_{L_0}A||_F \\leq (1+\\varepsilon)||A-A_k||_F\\).\nLet \\(P_L\\) denote projection onto the larger space L. For one data point \\(a_i\\), it can be decomposed into \\(a_i = P_La_i +a_i -P_La_i\\).\nNow, choose some candidate k-dimensional subspace \\(L' \\subseteq L\\), we want to approximate \\(a_i\\) using \\(L'\\). The total error is \\(a_i - P_{L'}a_i\\)\n\\[a_i - P_{L'}a_i = (a_i-P_La_i) + (P_La_i - P_{L'}a_i)\\] Notice that the first term \\((a_i-P_La_i)\\) is outside of the space \\(L\\), and the second term \\((P_La_i - P_{L'}a_i))\\) is inside the space \\(L\\).\nSince these two vectors are perpendicular, we can use pythagorean theorem. \\[||a_i-P_{L'}a_i||_2^2 = ||a_i-P_La_i||_2^2 + ||P_La_i - P_{L'}a_i||_2^2\\] and by summing this over all rows \\(a_i\\): \\[||A-P_{L'}A||_F^2 = ||A-P_LA||_F^2 + ||P_LA-P_{L'}A||_F^2\\]\nSince \\(||A-P_LA||_F^2\\) is fixed, minimizing \\(||A-P_{L'}||_F^2\\) is equivalent to minimizing \\(||P_LA-P_{L'}A||_F^2\\).\n\n\nSo… why is this matters for sketching?\nFrequently, randomized algorithms first construct a relatively small space \\(L\\) such that \\(L\\) contains some good rank-k approximation. we may not know which k-dimensional directions are the correct ones yet. However, we can find the best rank-k approximation inside \\(L\\). So the workflow becomes \\[A \\rightarrow \\text{Find a relatively small subspace L} \\rightarrow \\text{Project A as}\\space AP_L \\rightarrow \\text{compute the best rank-k approximation inside L}\\]\nSo, instead of solving the expensive low-rank problem directly in \\(\\mathbb{R}^d\\), we first use sketching to discover a mush smaller candidate space."
   }
 ]
