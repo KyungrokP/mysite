@@ -1,5 +1,6 @@
 ---
-title: "Home"
+title: "Kyungrok Park | AI Research"
+description: "Research projects, paper reviews, and study notes by Kyungrok Park."
 about:
   template: trestles
   image: profile.jpg
