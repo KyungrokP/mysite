@@ -35,7 +35,7 @@ This page is created as the study note for matrix sketching from the original te
 ::: {#def-fro-norm .definition}
 ### Frobenius norm error
 
-we will say a k-dimensional supspace of $\mathbb{R}^d$ spans a $(1+\varepsilon)$ rank-k approximation to A if $$ ||A-ALL^T||_F \leq (1+\varepsilon)||A-A_k||_F$$ where $LL^T$ is the projection operator onto that subspace.
+we will say a k-dimensional subspace of $\mathbb{R}^d$ spans a $(1+\varepsilon)$ rank-k approximation to A if $$ ||A-ALL^T||_F \leq (1+\varepsilon)||A-A_k||_F$$ where $LL^T$ is the projection operator onto that subspace.
 :::
 
 The textbook explains this by thinking each row of $A$ as a data point, $a_i$. If $L \in \mathbb{R}^{d \times k}$ have orthonormal columns: $L^TL = I_k$, then $P_L=LL^T$ is the orthogonal projection matrix onto the subspace spanned by the columns of $L$.
@@ -71,3 +71,9 @@ Since $||A-P_LA||_F^2$ is fixed, minimizing $||A-P_{L'}||_F^2$ is equivalent to 
 Frequently, randomized algorithms first construct a relatively small space $L$ such that $L$ contains some good rank-k approximation. we may not know which k-dimensional directions are the correct ones yet. However, we can find the best rank-k approximation inside $L$. So the workflow becomes $$A \rightarrow \text{Find a relatively small subspace L} \rightarrow \text{Project A as}\space AP_L \rightarrow \text{compute the best rank-k approximation inside L}$$
 
 So, instead of solving the expensive low-rank problem directly in $\mathbb{R}^d$, we first use sketching to discover a mush smaller candidate space. 
+
+::: {#lem1 .lemma}
+### Lemma 4.2 
+Let S be an $l_2$-subspace embedding for any fixed k-dimensional subspace $M$ with probability at least 9/10, so that $||Sy||_2 = (1 \pm 1/3)||y||_2$ for all $y \in M$. Further, suppose $S$ satisfies the $(\sqrt{\varepsilon/k}, 9/10, l)$-JL moment property for some $l \geq 2$ of Definition 2.5, so that the conclusion of Theorem 2.8 holds, namely, that for any fixed matrices $A$ and $B$ with k rows, $$Pr[||A^TS^TSB-A^TB||_F \geq 3\sqrt{\varepsilon/k}||A||_F||B||_F] \leq 1/10$$
+Then, the rowspace of $SA$ contains a $(1+\varepsilon)$ rank-k approximation of A.
+:::
