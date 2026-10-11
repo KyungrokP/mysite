@@ -5,11 +5,13 @@ project:
     - googlea3b826f60b687dc6.html
   
 website:
-  title: "Kyungrok Park"
-  navbar:
-    navbar:
+  title: "Kyungrok Park | AI Research"
+  site-url: "https://kyungrokp.github.io/"
+  description: "Research portfolio of Kyungrok Park, focusing on efficient transformers, KV-cache compression, machine learning, and applied statistics."
+    
+  navbar: 
     title: "Kyungrok Park | AI Research"
-    left:
+    left: 
       - href: index.qmd
         text: Home
       - text: "Projects"
@@ -58,6 +60,7 @@ format:
     theme: cosmo
     toc: true
     embed-resources: true
+    include-in-header: site-metadata.html
 
 editor: visual
 
