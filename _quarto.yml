@@ -8,9 +8,8 @@ website:
   title: "Kyungrok Park"
   site-url: "https://kyungrokp.github.io/"
   description: "Research portfolio of Kyungrok Park, focusing on efficient transformers, KV-cache compression, machine learning, and applied statistics."
-    
   navbar: 
-    title: "Kyungrok Park | AI Research"
+    title: "Kyungrok Park"
     left: 
       - href: index.qmd
         text: Home

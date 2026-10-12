@@ -1,5 +1,6 @@
 ---
 title: "Kyungrok Park"
+pagetittle: "Kyungrok Park"
 description: "Research projects, paper reviews, and study notes by Kyungrok Park."
 about:
   template: trestles
