@@ -1,0 +1,17 @@
+---
+title: "Value-Guided KV Compression (via approximated CUR Decomposition)"
+format: html
+---
+
+\boxed{
+\mathbb E_{S\sim\mathcal D}
+\left|
+\|Sx\|_2^2-1
+\right|^\ell
+\le
+\varepsilon^\ell\delta.
+}
+
+\]
+
+\[ Z=\|Sx\|\_2\^2-1

@@ -77,3 +77,18 @@ So, instead of solving the expensive low-rank problem directly in $\mathbb{R}^d$
 Let S be an $l_2$-subspace embedding for any fixed k-dimensional subspace $M$ with probability at least 9/10, so that $||Sy||_2 = (1 \pm 1/3)||y||_2$ for all $y \in M$. Further, suppose $S$ satisfies the $(\sqrt{\varepsilon/k}, 9/10, l)$-JL moment property for some $l \geq 2$ of Definition 2.5, so that the conclusion of Theorem 2.8 holds, namely, that for any fixed matrices $A$ and $B$ with k rows, $$Pr[||A^TS^TSB-A^TB||_F \geq 3\sqrt{\varepsilon/k}||A||_F||B||_F] \leq 1/10$$
 Then, the rowspace of $SA$ contains a $(1+\varepsilon)$ rank-k approximation of A.
 :::
+
+### About Lemma 4.2 and its proof... 
+By using SVD, matrix $A$ can be expressed as $A = U\Sigma V^T$ and let $U_k$ contain the top k left singular vectors of A. 
+
+The optimal rank-k approximation (by using the fact that truncation gives optimal rank-k approximation) is 
+$$ A = U_k \Sigma_k V_k^T$$.
+
+From the proof in the textbook, it proposes the following rank-k matrix: $$\tilde{A} = U_k (SU_K) ^+SA $$
+where $(SU_k)^+$ is the Moore-Penrose pseudoinverse. 
+
+Why? $(SU_k)^+SA$ is for recovering the coordinates of A relative to the important subspace $U_k$, but using only the sketched data $SA$. 
+If there were no sketching, since $U_k^TU_k = I $, the coordinates of $A$ in the $U_k$ directions would simply be $U_k^TA$. After sketching, we instead solve approximately through $SU_k$. So, $(SU_k)^+SA$ acts like a sketched version of $U_k^T A$. Then, multiplying by $U_k$ maps those recovered coordinates back, $U_k(SU_k)^+SA $.
+
+So, the proof in textbook is ultimately asking $||U_k(SU_k)^+ SA -A ||_F^2$, which asks whether the candidate is close to $A$. 
+

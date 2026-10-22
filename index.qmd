@@ -20,6 +20,8 @@ Welcome to my website! My name is Kyungrok Park, and I studied my Bachelor for E
 
 University of Toronto, ON, Canada, B.A in Economics and Applied Statistics
 
+University of Ottawa, ON, Canada, M.D in Mathematics and Statistics (focused on statistics)
+
 ## Project
 
 1.  Exploring KV cache Compression Method (Quantization, Grouping and Random Rotation)
